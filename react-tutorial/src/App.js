@@ -1,3 +1,4 @@
+import React, { useCallback, useState, useRef } from 'react';
 import './App.css';
 import Hooks from './components/Hooks';
 import LifeCycleMethod from './components/LifeCycleMethods';
@@ -5,7 +6,8 @@ import ChildComp from './components/ChildComp';
 import { ThemeProvider } from './components/ContextProvider';
 import UseMemoHook from './components/UseMemoHook';
 import UseCallbackHook from './components/UseCallbackHook';
-import React, { useCallback, useState } from 'react';
+import ForwardRefChild from './components/ForwardRefChild';
+
 
 const ChildComponent = React.memo(({ handleClick }) => {
   console.log('Child re-rendered');
@@ -14,6 +16,7 @@ const ChildComponent = React.memo(({ handleClick }) => {
 
 function App() {
   const [count, setCount] = useState(0);
+  const myRef = useRef(null);
 
   //Callback function would only be re-defined when count changes
   const increment = useCallback(() => {
@@ -24,6 +27,17 @@ function App() {
   //   setCount(prev => prev + 1)
   // }
 
+  function handleClick() {
+    myRef.current.focus();
+  }
+
+  function handleFocus() {
+    myRef.current.focusTheInput();
+  }
+  function handleClear() {
+    myRef.current.clearInput();
+  }
+
   return (
     <ThemeProvider>
       <div className="App-header">
@@ -32,8 +46,13 @@ function App() {
         {/* <Hooks />
         <ChildComp />
         <UseMemoHook /> */}
-        <ChildComponent handleClick={increment} num={count} />
-        <p>Count:{count}</p>
+        {/* <ChildComponent handleClick={increment} num={count} /> */}
+        <ForwardRefChild label={"My input"} ref={myRef} />
+        <button onClick={handleFocus}>Focus Input</button>
+        <button onClick={handleClear}>Clear Input</button>
+        <button type="button" onClick={handleClick}>
+          Edit
+        </button>
       </div>
     </ThemeProvider>
   );
