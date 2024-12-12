@@ -7,12 +7,28 @@ import { ThemeProvider } from './components/ContextProvider';
 import UseMemoHook from './components/UseMemoHook';
 import UseCallbackHook from './components/UseCallbackHook';
 import ForwardRefChild from './components/ForwardRefChild';
+import ErrorBoundary from './components/ErrorBoundary';
+import useFetch from './components/useFetch';
 
 
 const ChildComponent = React.memo(({ handleClick }) => {
   console.log('Child re-rendered');
   return <button onClick={handleClick}>Click me</button>;
 });
+
+const Fallback = ({ resetErrorBoundary }) => {
+  return <div>
+    Fallback component
+    {/* <p>{JSON.stringify(error)}</p>
+    <p>{JSON.stringify(errorInfo)}</p> */}
+    <button onClick={resetErrorBoundary}>Try again</button>
+  </div>
+}
+
+const BuggyComponent = () => {
+  throw new Error("Crashed");
+  return <div>This will never be reached!</div>
+}
 
 function App() {
   const [count, setCount] = useState(0);
@@ -38,6 +54,12 @@ function App() {
     myRef.current.clearInput();
   }
 
+  // const [userData, setUserData] = useState({});
+
+  const { data, loading } = useFetch("https://reqres.in/api/users/2");
+
+  if (loading) return <p>Loading...</p>;
+
   return (
     <ThemeProvider>
       <div className="App-header">
@@ -47,12 +69,16 @@ function App() {
         <ChildComp />
         <UseMemoHook /> */}
         {/* <ChildComponent handleClick={increment} num={count} /> */}
-        <ForwardRefChild label={"My input"} ref={myRef} />
+        {/* <ForwardRefChild label={"My input"} ref={myRef} />
         <button onClick={handleFocus}>Focus Input</button>
         <button onClick={handleClear}>Clear Input</button>
         <button type="button" onClick={handleClick}>
           Edit
-        </button>
+        </button> */}
+        {/* <ErrorBoundary FallbackComponent={Fallback}>
+          <BuggyComponent />
+        </ErrorBoundary> */}
+        <div>{JSON.stringify(data, null, 2)}</div>
       </div>
     </ThemeProvider>
   );
